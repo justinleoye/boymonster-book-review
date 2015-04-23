@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% set page_title="Book Review" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            {% if search_error == '200' %}
+            <hr class="featurette-divider">
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span12"><!--book info-->
+                            <div class="row">
+                                <div class="span2">
+                                    <img src="{{ book['images']['medium'] }}" />
+                                </div>
+                                <div class="span4">
+                                    <table class="table">
+                                        <tr>
+                                            <td>书名</td>
+                                            <td>{{ book['title'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>作者</td>
+                                            <td>{{ book['author'][0] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>原价</td>
+                                            <td>{{ book['price'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>出版社</td>
+                                            <td>{{ book['publisher'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ISBN</td>
+                                            <td>{{ book['isbn'] }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="span12"><!--book-selling form-->
+                                    <h4>书评</h4>
+                                    {% if review.isOwned %}
+                                    <div class="row-fluid">
+                                        <div class="span3 offset9">
+                                            <div class="span6">
+                                                <a href="/book/{{ book['isbn'] }}/reviews/{{ review.id }}/action/edit"><button class="btn btn-warning">编辑</button></a>
+                                            </div>
+                                            <div class="span6">
+                                                <a href="/book/{{ book['isbn'] }}/reviews/{{ review.id }}/action/delete"><button class="btn btn-danger">删除</button></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <hr class="featurette-divider">
+                                    <div class="row-fluid">
+                                        <div class="span12">
+                                            <div class="book-review">
+                                                <div class="row-fluid">
+                                                    <div class="span6">
+                                                        <div class="user-name">
+                                                            <span>{{ review.writer.username }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="span6">
+                                                        <div class="updated pull-right">
+                                                            <span>{{ review.updated }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row-fluid">
+                                                    <div class="span12">
+                                                        <div class="content">
+                                                            <p>{{ review.content }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!--book-selling form-->
+                            </div>
+                        </div><!--book info-->
+                    </div><!--row-fluid-->
+                </div><!--container-fluid-->
+            {% else %}
+                <p class="text-error">这本书有错误</p>
+            {% endif %}
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}

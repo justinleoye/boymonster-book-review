@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% set page_title="Order List" %}
+{% set active_page="orderlist" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h4>我的购物车</h4>
+            <hr class="featurette-divider">
+            <div class="span12">
+                {% if order_list %}
+                <ul class="thumbnails">
+                    {% for order in order_list %}
+                    <li class="book-display">
+                        <a href="/book/{{ order['isbn'] }}">
+                            <div class="thumbnail book-label text-center">
+                                <div class="span12 book-label-body">
+                                    <img src="{{ order['images']['small'] }}" />
+                                </div>
+                                <div class="span12 book-label-header">
+                                    <h5>{{ order['title'] }}</h5>
+                                    <p class="text-info">{{ order['discount']|float()*0.1*(order['price']|float())}}元
+                                    {{ order['date'].strftime("%Y-%m-%d") }}</p>
+                                </div>
+                                <p class="book-label-footer">
+                                    <a href="/user/{{ order['ownerid'] }}"><button class="btn btn-inverse"><i class="icon-user icon-white"></i>立即联系卖家</button></a>
+
+                                    <form class="form-horizontal" method="post">
+                                        <input type="hidden" value="{{ order['userbookid'] }}" name="userbookid">
+                                        <button type="submit" value="1" class="order-button btn btn-danger"><i class="icon-trash icon-white"></i>从购物车删除</button>
+                                    </form>
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                    {% if (order_list|length())>=8 %}
+                        <button class="btn btn-large btn-block btn-primary" value="8" id="getMoreBooks" type="button">显示更多...</button>
+                    {% endif %}
+                {% else %}
+                <div class="span12">
+                    <div class="alert">
+                        <strong>Oops! </strong>您购物车里还没有任何书！
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div><!--container-fluid-->
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    $('.order-button').click(function(){
+        var userbookid = $(this).siblings('input').val();
+        var button = $(this);
+        var theurl = '/order/'+userbookid;
+        $.ajax({
+            type:"POST",
+            url:theurl,
+            data: $(this).parents('form').serialize(),
+            success:function(result) {
+                
+                if (result=='True'){
+                    var button_status = button.val();
+                    
+                    if (button_status=="1"){
+                        
+                        button.attr("value","0");
+                        button.attr("class","order-button btn btn-success");
+                        button.empty();
+                        button.append('<i class="icon-shopping-cart icon-white"></i>再加入购物车');
+                    }else{
+                        button.attr("value","1");
+                        button.attr("class","order-button btn btn-danger");
+                        button.empty();
+                        button.append('<i class="icon icon-trash  icon-white"></i>从购物车删除');
+                    }
+                }
+
+                if (result=='NotLogin'){
+                    alert("not login");
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}

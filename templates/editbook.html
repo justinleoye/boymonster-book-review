@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% set page_title="SellBook" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            {% if book != {} %}<!--Do some search action-->
+            <h3>编辑图书信息</h3>
+            <hr class="featurette-divider">
+                {% if search_error == '200' or search_error == '610' %}
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span12"><!--book info-->
+                            <div class="row">
+                                <div class="span2">
+                                    <img src="{{ book['images']['medium'] }}" />
+                                </div>
+                                <div class="span4">
+                                    <table class="table">
+                                        <tr>
+                                            <td>书名</td>
+                                            <td>{{ book['title'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>作者</td>
+                                            <td>{{ book['author'][0] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>价格</td>
+                                            <td>{{ book['price'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>出版社</td>
+                                            <td>{{ book['publisher'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ISBN</td>
+                                            <td>{{ book['isbn'] }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="span12"><!--book-selling form-->
+                                    <h4>编辑图书信息</h4>
+                                    <hr class="featurette-divider">
+                                    <form class="form-horizontal" method="post">
+                                        <input type="hidden" value="{{ book['hash'] }}" name="hashkey">
+                                        <input type="hidden" value="{{ book['id'] }}" name="doubanid">
+                                        <input type="hidden" value="{{ book['isbn'] }}" name="isbn">
+                                        <div class="control-group">
+                                            <label class="control-label label-small" for="selectSchool">学院</label>
+                                            <div class="controls">
+                                                <select id="selectSchool" name="school">
+                                                    {% for school in const_info['school'] %}
+                                                        {% if school[0] == const_info['default']['school'] %}
+                                                        <option value="{{ school[0] }}" selected="selected">{{ school[1] }}</option>
+                                                        {% else %}
+                                                        <option value="{{ school[0] }}">{{ school[1] }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label small" for="selectMajor">推荐专业</label>
+                                            <div class="controls">
+                                                <select id="selectMajor" name="major">
+                                                    {% for major in const_info['schoolmajor'][const_info['default']['school']] %}
+                                                        {% if major[0] == const_info['default']['major'] %}
+                                                        <option value="{{ major[0] }}" selected="selected">{{ major[1] }}</option>
+                                                        {% else %}
+                                                        <option value="{{ major[0] }}">{{ major[1] }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label small" for="selectGrade">推荐年级</label>
+                                            <div class="controls">
+                                                <select id="selectGrade" name="grade">
+                                                    {% for grade in const_info['grade'] %}
+                                                        {% if grade[0] == const_info['default']['grade'] %}
+                                                        <option value="{{ grade[0] }}" selected="selected">{{ grade[1] }}</option>
+                                                        {% else %}
+                                                        <option value="{{ grade[0] }}">{{ grade[1] }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label small" for="selectDiscount">折扣</label>
+                                            <div class="controls">
+                                                <select id="selectDiscount" name="discount">
+                                                    {% for i in range(10) %}
+                                                        {% if i==(user_book.discount|int()) %}
+                                                        <option value="{{ i }}" selected="selected">{{ i }}折</option>
+                                                        {% else %}
+                                                        <option value="{{ i }}">{{ i }}折</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {% if search_error =='200' %}
+                                        <div class="control-group">
+                                            <label class="control-label small" for="inputText">描述</label>
+                                            <div class="controls">
+                                                <textarea name="extra" value="" id="inputText" placeholder="Extra introductions">{{ user_book.extra }}</textarea>
+                                                <span class="help-inline">描述必须少于20个字！</span>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="control-group error">
+                                            <label class="control-label small" for="inputText">描述</label>
+                                            <div class="controls">
+                                                <textarea name="extra" value="" id="inputText" placeholder="Extra introductions">{{ user_book.extra }}</textarea>
+                                                <span class="help-inline error">描述必须少于20个字！</span>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="control-group">
+                                            <div class="row">
+                                                <div class="span2 offset2">
+                                                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i>保存</button> 
+                                                </div>
+                                                <div class="span2 offset2">
+                                                    <a href="/book/{{ book['isbn'] }}"><button class="btn btn-inverse"><i class="icon-remove icon-white"></i>取消</button></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div><!--book-selling form-->
+                            </div>
+                        </div><!--book info-->
+                    </div><!--row-fluid-->
+                </div><!--container-fluid-->
+                {% else %}
+                    <span class="label label-warning">Sorry,出错！</span>
+                {% endif %}
+            {% elif search_error== '612' %}
+                
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <h3>Error {{ search_error }}</h3>
+                        </div>
+                        <div class="span12">
+                            <span class="label label-warning">Sorry,您没有编辑这本书的权限！</span>
+                        </div>
+                        <div class="span12">
+                            <div class="btn-group">
+                                <a href="/me"><button class="btn btn-primary" type="button">查看我所卖的书</button></a>
+                                <a href="/home"><button class="btn" type="button">Go Home</button></a>
+                            </div>
+                        </div>
+                    </div><!--row-fluid-->
+                </div><!--container-fluid-->
+            {% else %}<!-- None search action-->
+                <span class="label label-warning">Sorry,出错！</span>
+            {% endif %}
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}

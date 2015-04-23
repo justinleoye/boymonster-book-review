@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% set page_title="Book reviews" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            {% if search_error == '200' and book != {} %}
+            <h3>{{ book['title'] }}</h3>
+            <hr class="featurette-divider">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    
+                    <div class="span12"><!--book info-->
+                        <div class="row">
+                            <div class="span4">
+                                <img src="{{ book['images']['medium'] }}" />
+                            </div>
+                            <div class="span8">
+                                <table class="table">
+                                    <tr>
+                                        <td>书名</td>
+                                        <td>{{ book['title'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>作者</td>
+                                        <td>{{ book['author'][0] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>原价</td>
+                                        <td>{{ book['price'] }}元</td>
+                                    </tr>
+                                    <tr>
+                                        <td>出版社</td>
+                                        <td>{{ book['publisher'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>摘要</td>
+                                        <td>{{ book['summary'] }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!--book info-->
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <a href="/addbookreview/{{ book['isbn'] }}"><button class="login-check btn btn-primary">添加书评</button></a>
+                        </div>
+                    </div>
+                    {% for review in  book_reviews %}
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div class="book-review">
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="user-name">
+                                            <span>{{ review.writer.username }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="updated pull-right">
+                                            <span>{{ review.updated }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <div class="content">
+                                            <p>{{ review.content |truncate(100) }} <a href="/book/{{ book['isbn'] }}/reviews/{{ review.id }}">查看全文</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div><!--row-fluid-->
+            </div><!--container-fluid-->
+            {% elif search_error == '242' %}
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>这本书还不在豆瓣的数据库里！你可以成为<strong>第一个上传者</strong>！非常感谢！
+                </div>
+            </div>
+            <div class="span12">
+                <div class="span3">
+                    <a href="http://book.douban.com/subject_search?search_text={{ book['wrong-isbn'] }}&cat=1001" target="_blank"><button class="btn btn-primary"><i class="icon-upload icon-white"></i>上传到豆瓣</button></a>
+                </div>
+                <div class="span3">
+                    <a href="#"><button class="btn btn-primary"><i class=" icon-envelope icon-white"></i>联系BoyMonster</button></a>
+                </div>
+                <div class="span3">
+                    <a href="/home"><button class="btn btn-primary"><i class=" icon-home icon-white"></i>Home</button></a>
+                </div>
+            </div>
+            {% elif search_error == '608' %}
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>您输入的ISBN有错误！请重试！
+                </div>
+            </div>
+            <div class="span12">
+                <div class="span3">
+                    <a href="/help"><button class="btn btn-primary"><i class="icon-question-sign icon-white"></i>帮助</button></a>
+                </div>
+                <div class="span2 offset1">
+                    <a href="/home"><button class="btn btn-primary"><i class=" icon-home icon-white"></i>Home</button></a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}

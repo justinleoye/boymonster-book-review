@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% set page_title="EditProfile" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h4>帐号基本信息</h4>
+            <hr class="featurette-divider">
+            <form class="form-horizontal" method="post">
+                <input type="hidden" value="{{ user.userid }}" name="ownerid">
+                {% if email_error =='' %}
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Email</label>
+                    <div class="controls">
+                        <input type="text" name="email" value="{{ email }}" id="inputEmail" placeholder="Email">
+                        <span class="help-inline">方便您找回秘密</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="control-group error">
+                    <label class="control-label" for="inputEmail">Email</label>
+                    <div class="controls">
+                        <input type="text" name="email" value="{{ email }}" id="inputEmail" placeholder="Email">
+                        <span class="help-inline">{{email_error}}</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if tel_error =='' %}
+                <div class="control-group">
+                    <label class="control-label" for="inputTel">手机号</label>
+                    <div class="controls">
+                        <input type="text" name="tel" value="{{ tel }}" id="inputTel" placeholder="输入手机号码">
+                        <span class="help-inline">方便买家联系您</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="control-group error">
+                    <label class="control-label" for="inputTel">手机号</label>
+                    <div class="controls">
+                        <input type="text" name="tel" value="{{ tel }}" id="inputTel" placeholder="输入手机号码">
+                        <span class="help-inline">{{tel_error}}</span>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="control-group">
+                    <div class="row">
+                        <div class="span2 offset2">
+                            <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i>保存</button> 
+                        </div>
+                        <div class="span2 offset2">
+                            <a href="/profile"><button class="btn btn-inverse"><i class="icon-remove icon-white"></i>取消</button></a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}

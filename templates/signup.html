@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% set page_title="Signup" %}
+{% set active_page="" %}
+{% block content %}
+    <h4>注册帐号</h4>
+    <hr class="featurette-divider">
+    <form class="form-horizontal" method="post">
+        {% if username_error =='' %}
+        <div class="control-group">
+            <label class="control-label" for="inputUsername">用户名</label>
+            <div class="controls">
+                <input type="text" name="username" value="{{username}}" id="inputUsername" placeholder="输入用户名">
+                <span class="help-inline">用户名是3到20个英文字符、数字或者“-”</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="control-group error">
+            <label class="control-label" for="inputUsername">用户名</label>
+            <div class="controls">
+                <input type="text" name="username" value="{{username}}" id="inputUsername" placeholder="输入用户名">
+                <span class="help-inline">{{username_error}}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if password_error =='' %}
+        <div class="control-group">
+            <label class="control-label" for="inputPassword">密 码</label>
+            <div class="controls">
+                <input type="password" name="password" id="inputPassword" placeholder="输入密码">
+                <span class="help-inline">至少3个字符，最多20个字符，区分大小写</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="control-group error">
+            <label class="control-label" for="inputPassword">密 码</label>
+            <div class="controls">
+                <input type="password" name="password" id="inputPassword" placeholder="输入密码">
+                <span class="help-inline">{{password_error}}</span>
+            </div>
+        </div>
+        {% endif %}
+        {% if v_password_error =='' %}
+        <div class="control-group">
+            <label class="control-label" for="inputVerifyPassword">确认密码</label>
+            <div class="controls">
+                <input type="password" name="verify" id="inputVerifyPassword" placeholder="确认输入密码">
+            </div>
+        </div>
+        {% else %}
+        <div class="control-group error">
+            <label class="control-label" for="inputVerifyPassword">确认密码</label>
+            <div class="controls">
+                <input type="password" name="verify" id="inputVerifyPassword" placeholder="确认输入密码">
+                <span class="help-inline">{{v_password_error}}</span>
+            </div>
+        </div>
+        {% endif %}
+        {% if email_error =='' %}
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Email</label>
+            <div class="controls">
+                <input type="text" name="email" value="{{ email }}" id="inputEmail" placeholder="Email">
+                <span class="help-inline">方便您找回秘密</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="control-group error">
+            <label class="control-label" for="inputEmail">Email</label>
+            <div class="controls">
+                <input type="text" name="email" value="{{ email }}" id="inputEmail" placeholder="Email">
+                <span class="help-inline">{{email_error}}</span>
+            </div>
+        </div>
+        {% endif %}
+        {% if tel_error =='' %}
+        <div class="control-group">
+            <label class="control-label" for="inputTel">手机号</label>
+            <div class="controls">
+                <input type="text" name="tel" value="{{ tel }}" id="inputTel" placeholder="输入手机号码">
+                <span class="help-inline">方便买家联系您</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="control-group error">
+            <label class="control-label" for="inputTel">手机号</label>
+            <div class="controls">
+                <input type="text" name="tel" value="{{ tel }}" id="inputTel" placeholder="输入手机号码">
+                <span class="help-inline">{{tel_error}}</span>
+            </div>
+        </div>
+        {% endif %}
+        {% if terms_error == '' %}
+        <div class="control-group">
+            <div class="controls">
+                <input type="checkbox" id="checkboxTerms" name="terms" checked="checked">我已经认真阅读并同意BoyMonster的《<a href="/terms">使用协议</a>》。
+            </div>
+        </div>
+        {% else %}
+        <div class="control-group error">
+            <div class="controls">
+                <input type="checkbox" id="checkboxTerms" name="terms"><span class="help-inline error">您还没有认真阅读并同意BoyMonster的《<a href="/terms">使用协议</a>》。</span>
+            </div>
+        </div>
+        {% endif %}
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-primary">注册</button>
+                <span class="help-inline text-right">已经有一个BoyMonster帐号？ <a href="/login">立即登录</a></span>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

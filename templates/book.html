@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% set page_title="Book" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            {% if search_error == '200' and book != {} %}
+            <h3>{{ book['title'] }}</h3>
+            <hr class="featurette-divider">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    {% if book['owner'] =='True' %}
+                    <div class="span12">
+                        <div class="span3 offset9">
+                            <div class="span6">
+                                <a href="/editbook/{{ book['isbn'] }}"><button class="btn btn-warning">编辑</button></a>
+                            </div>
+                            <div class="span6">
+                                <a href="/delbook/{{ book['isbn'] }}"><button class="btn btn-danger">删除</button></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="span12"><!--book info-->
+                        <div class="row">
+                            <div class="span4">
+                                <img src="{{ book['images']['medium'] }}" />
+                            </div>
+                            <div class="span8">
+                                <table class="table">
+                                    <tr>
+                                        <td>书名</td>
+                                        <td>{{ book['title'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>作者</td>
+                                        <td>{{ book['author'][0] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>原价</td>
+                                        <td>{{ book['price'] }}元</td>
+                                    </tr>
+                                    <tr>
+                                        <td>出版社</td>
+                                        <td>{{ book['publisher'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>摘要</td>
+                                        <td>{{ book['summary'] }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!--book info-->
+                    {% if booksellers %}
+                    <div class="span12"><!--seller info-->
+                        <h4>卖家</h4>
+                        <hr class="featurette-divider">
+                        <div class="alert alert-info">
+                            书的价格只是参考，实际价格可以跟卖家自行商量！
+                        </div>
+                        <table id="sellers" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th><th>卖家</th><th>日期</th><th>价格</th><th>推荐专业</th><th>推荐年级</th><th>描述</th><th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bookseller in booksellers %}
+                                <tr>
+                                    <td><i class="icon-user"></i></td><td>{{ bookseller['username'] }}</td><td>{{ bookseller['date'].strftime("%Y-%m-%d") }}</td><td>{{ bookseller['discount']|float()*0.1*(book['price']|float())}}元</td><td>{{ bookseller['major'] }}</td><td>{{ bookseller['grade'] }}</td><td>{{ bookseller['extra'] }}</td><td><a href="/order/{{ bookseller['userbookid'] }}"><button class="btn btn-primary">Buy</button></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if (booksellers|length())>=8 %}
+                            <button class="btn btn-large btn-block btn-primary" value="8&{{ book['isbn'] }}" id="getMoreBooks" type="button">显示更多...</button>
+                        {% endif %}
+                    </div><!--seller info-->
+                    {% endif %}
+                </div><!--row-fluid-->
+            </div><!--container-fluid-->
+            {% elif search_error == '604' %}
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>这本书还没有卖家！你可以成为第一个卖家，或者赠书者！谢谢！
+                </div>
+            </div>
+            <div class="span12">
+                <div class="span2">
+                    <a href="/finishsell/{{ book['isbn'] }}"><button class="btn btn-primary"><i class=" icon-ok icon-white"></i>Sell</button></a>
+                </div>
+                <div class="span2 offset1">
+                    <a href="/home"><button class="btn btn-primary"><i class=" icon-home icon-white"></i>Home</button></a>
+                </div>
+            </div>
+            {% elif search_error == '242' %}
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>这本书还不在豆瓣的数据库里！你可以成为<strong>第一个上传者</strong>！非常感谢！
+                </div>
+            </div>
+            <div class="span12">
+                <div class="span3">
+                    <a href="http://book.douban.com/subject_search?search_text={{ book['wrong-isbn'] }}&cat=1001" target="_blank"><button class="btn btn-primary"><i class="icon-upload icon-white"></i>上传到豆瓣</button></a>
+                </div>
+                <div class="span3">
+                    <a href="#"><button class="btn btn-primary"><i class=" icon-envelope icon-white"></i>联系BoyMonster</button></a>
+                </div>
+                <div class="span3">
+                    <a href="/home"><button class="btn btn-primary"><i class=" icon-home icon-white"></i>Home</button></a>
+                </div>
+            </div>
+            {% elif search_error == '608' %}
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>您输入的ISBN有错误！请重试！
+                </div>
+            </div>
+            <div class="span12">
+                <div class="span3">
+                    <a href="/help"><button class="btn btn-primary"><i class="icon-question-sign icon-white"></i>帮助</button></a>
+                </div>
+                <div class="span2 offset1">
+                    <a href="/home"><button class="btn btn-primary"><i class=" icon-home icon-white"></i>Home</button></a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    $('#getMoreBooks').click(function(){
+        $('#getMoreBooks').attr("disabled","disabled");
+        $('#getMoreBooks').empty();
+        $('#getMoreBooks').append('正在载入...');
+        
+        var request = $('#getMoreBooks').val();
+        var theurl = "/ajaxpager/book/"+request;
+        var request = request.split("&");
+        var new_request = parseInt(request[0]);
+        var isbn = request[1]
+        var the_request = parseInt(request[0]);
+        
+        $.ajax({
+            type:"GET",
+            url:theurl,
+            dataType:"json",
+            success:function(booksellers) {
+                $.each(booksellers, function(i,bookseller){
+                    var book_html ='<tr>\
+                                    <td><i class="icon-user"></i></td><td>'+bookseller['username']+'</td><td>'+bookseller['date']+'</td><td>'+parseFloat(bookseller['discount']).toFixed(1)+'元</td><td>'+bookseller['major']+'</td><td>'+bookseller['grade']+'</td><td>'+bookseller['extra']+'</td><td><a href="/user/'+bookseller['userid']+'"><button class="btn btn-primary">Buy</button></a></td>\
+                                </tr>';
+                    //alert(i);
+                    new_request=new_request + 1;
+                    
+                    $('#sellers tbody').append(book_html);
+                });
+                if(new_request==the_request){
+                    $('#getMoreBooks').remove();
+                }else{
+                    $('#getMoreBooks').attr("value",new_request.toString());
+                    $('#getMoreBooks').removeAttr("disabled");
+                    $('#getMoreBooks').empty();
+                    $('#getMoreBooks').append('载入更多...');
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}

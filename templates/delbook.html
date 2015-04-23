@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% set page_title="DeleteBook" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <h3>删除该书</h3>
+        <hr class="featurette-divider">
+        {% if search_error=='200' %}
+        <div class="span10">
+            <div class="alert">
+                <strong>Warning! </strong>您正在尝试删除 <strong>{{ book['title'] }} </strong>这本书！
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span2">
+                <form class="form-horizontal" method="post">
+                    <input type="hidden" value="{{ book['hash'] }}" name="hashkey">
+                    <input type="hidden" value="{{ book['id'] }}" name="doubanid">
+                    <input type="hidden" value="{{ book['isbn'] }}" name="isbn">
+                    <button type="submit" class="btn btn-warning"><i class="icon-ok icon-white"></i>删除</button>
+                </form>
+            </div>
+            <div class="span2">
+                <a href="/book/{{ book['isbn'] }}"><button class="btn btn-inverse"><i class="icon-remove icon-white"></i>取消</button></a>
+            </div>
+        </div>
+        {% elif search_error=='612' %}
+        <div class="span10">
+            <div class="alert">
+                <strong>Error! </strong>您没有权限删除<strong>{{ book['title'] }} </strong>这本书！
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span2">
+                <a href="/book/{{ book['isbn'] }}"><button class="btn btn-primary"><i class=" icon-arrow-left icon-white"></i>返回</button></a>
+            </div>
+        </div>
+        {% elif search_error=='614' %}
+        <div class="span10">
+            <div class="alert">
+                <strong>Error! </strong>Your delete book post is not valided !
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span2">
+                <a href="/me"><button class="btn btn-primary"><i class=" icon-arrow-left icon-white"></i>返回</button></a>
+            </div>
+        </div>
+        {% else %}<!--isbn search error,no such a book-->
+        <div class="span10">
+            <div class="alert">
+                <strong>Error! </strong>您删除的这本书不存在！
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span2">
+                <a href="/home"><button class="btn btn-primary"><i class=" icon-home icon-white"></i>Go Home</button></a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

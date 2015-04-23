@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% set page_title="DelAcount" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <h4>注销帐户</h4>
+        <hr class="featurette-divider">
+        <div class="span10">
+            <div class="alert">
+                <strong>Warning! </strong>您正在尝试<strong>注销您的帐号</strong>！
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span2">
+                <form class="form-horizontal" method="post">
+                    <input type="hidden" value="1" name="delacount">
+                    <button type="submit" class="btn btn-warning"><i class="icon-ok icon-white"></i>注销帐户</button>
+                </form>
+            </div>
+            <div class="span2">
+                <a href="/profile"><button class="btn btn-inverse"><i class="icon-remove icon-white"></i>取&nbsp;&nbsp;&nbsp;&nbsp;消</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

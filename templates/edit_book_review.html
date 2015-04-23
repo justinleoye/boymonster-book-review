@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% set page_title="Book Review" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            {% if search_error == '200' %}
+            <hr class="featurette-divider">
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span12"><!--book info-->
+                            <div class="row">
+                                <div class="span2">
+                                    <img src="{{ book['images']['medium'] }}" />
+                                </div>
+                                <div class="span4">
+                                    <table class="table">
+                                        <tr>
+                                            <td>书名</td>
+                                            <td>{{ book['title'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>作者</td>
+                                            <td>{{ book['author'][0] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>原价</td>
+                                            <td>{{ book['price'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>出版社</td>
+                                            <td>{{ book['publisher'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ISBN</td>
+                                            <td>{{ book['isbn'] }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="span12"><!--book-selling form-->
+                                    <h4>编辑书评</h4>
+                                    <hr class="featurette-divider">
+                                    <form class="form" method="post">
+                                        {% if content_error =='' %}
+                                        <div class="control-group">
+                                            <div class="controls">
+                                                <textarea class="bookreview" name="content" value="" id="inputText" placeholder="写书评啦">{{ review.content }}</textarea>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <p class="text-error">{{ content_error }}</p>
+                                        <div class="control-group error">
+                                            <div class="controls">
+                                                <textarea class="bookreview" name="content" value="" id="inputText" placeholder="写书评啦">{{ review.content }}</textarea>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="row-fluid">
+                                            <div class="span6">
+                                                <a class="btn btn-reverse" href="/book/{{ book['isbn'] }}/reviews/{{ review.id }}">取消</a>
+                                            </div>
+                                            <div class="span6">
+                                                <div class="control-group">
+                                                    <div class="controls">
+                                                        <button type="submit" class="btn btn-primary">保存</button> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div><!--book-selling form-->
+                            </div>
+                        </div><!--book info-->
+                    </div><!--row-fluid-->
+                </div><!--container-fluid-->
+            {% else %}
+                <p class="text-error">这本书有错误</p>
+            {% endif %}
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% set page_title="Classify" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>分类查找</h3>
+            <hr class="featurette-divider">
+            <form class="form-inline" action="/classify" method="post">
+                <label for="selectSchool">学院</label>
+                <select class="span2" id="selectSchool" name="school">
+                    {% for school in const_info['school'] %}
+                        {% if school[0] == const_info['default']['school'] %}
+                        <option value="{{ school[0] }}" selected="selected">{{ school[1] }}</option>
+                        {% else %}
+                        <option value="{{ school[0] }}">{{ school[1] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <label for="selectMajor">专业</label>
+                <select class="span2" id="selectMajor" name="major">
+                    {% for major in const_info['schoolmajor'][const_info['default']['school']] %}
+                        {% if major[0] == const_info['default']['major'] %}
+                        <option value="{{ major[0] }}" selected="selected">{{ major[1] }}</option>
+                        {% else %}
+                        <option value="{{ major[0] }}">{{ major[1] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <label for="selectGrade">年级</label>
+                <select class="span2" id="selectGrade" name="grade">
+                    {% for grade in const_info['grade'] %}
+                        {% if grade[0] == const_info['default']['grade'] %}
+                        <option value="{{ grade[0] }}" selected="selected">{{ grade[1] }}</option>
+                        {% else %}
+                        <option value="{{ grade[0] }}">{{ grade[1] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i>Search</button> 
+            </form>
+        </div>
+        <div class="span12">
+            
+            {% if search_error == '200' %}
+            <h4>搜索结果</h4>
+            <hr class="featurette-divider">
+                {% for book in books %}
+                <div class="span12">
+                    <div class="row">
+                        <div class="span2">
+                            <img src="{{ book['images']['small'] }}" />
+                            <a href="/book/{{ book['isbn'] }}"><button class="btn btn-primary">现在购买</button></a>
+                        </div>
+                        <div class="span10">
+                            <table class="table">
+                                <tr>
+                                    <td>书名</td>
+                                    <td>{{ book['title'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>作者</td>
+                                    <td>{{ book['author'][0] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>出版社</td>
+                                    <td>{{ book['publisher'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>摘要</td>
+                                    <td>{{ book['summary']|truncate(length=60,killwords=True,end='... ...') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if (books|length())>=4 %}
+                    <button class="btn btn-large btn-block btn-primary" value="8&{{ const_info['default']['major'] }}&{{ const_info['default']['grade'] }}" id="getMoreBooks" type="button">显示更多...</button>
+                {% endif %}
+            {% elif search_error == '632' %}
+            <h4>搜索结果</h4>
+            <hr class="featurette-divider">
+            <div class="span12">
+                <div class="span10">
+                    <div class="alert">
+                        <strong>Oops! </strong>通过专业或年级没有搜索到在卖图书！<br />
+                        你可以通过更改专业、年级或学院进行搜索！
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            {{ search_error }}
+            {% endif %}
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+
+{% endblock content %}
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    $('#getMoreBooks').click(function(){
+        $('#getMoreBooks').attr("disabled","disabled");
+        $('#getMoreBooks').empty();
+        $('#getMoreBooks').append('正在载入...');
+        
+        var request = $('#getMoreBooks').val();
+        var theurl = "/ajaxpager/classify/"+request;
+        var request_major_grade = request.split("&");
+        var new_request = parseInt(request_major_grade[0]);
+        var major = request_major_grade[1];
+        var grade = request_major_grade[2];
+        var the_request = parseInt(request_major_grade[0]);
+
+        
+        $.ajax({
+            type:"GET",
+            url:theurl,
+            dataType:"json",
+            success:function(books) {
+                $.each(books, function(i,book){
+                    var book_html ='<div class="span12">\
+                        <div class="row">\
+                            <div class="span2">\
+                                <img src="'+book['images']['small']+'" />\
+                                <a href="/book/'+book['isbn']+'"><button class="btn btn-primary">现在购买</button></a>\
+                            </div>\
+                            <div class="span10">\
+                                <table class="table">\
+                                    <tr>\
+                                        <td>书名</td>\
+                                        <td>'+book['title']+'</td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td>作者</td>\
+                                        <td>'+book['author'][0]+'</td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td>出版社</td>\
+                                        <td>'+book['publisher']+'</td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td>摘要</td>\
+                                        <td>'+book['summary'].substr(0,60)+'... ...</td>\
+                                    </tr>\
+                                </table>\
+                            </div>\
+                        </div>\
+                    </div>';
+                    //alert(i);
+                    new_request=new_request + 1;
+                    $('#getMoreBooks').before(book_html);
+                });
+
+                if(new_request == the_request){
+                    $('#getMoreBooks').remove();
+                }else{
+                    
+                    $('#getMoreBooks').attr("value",new_request.toString()+'&'+major+'&'+grade);
+                    $('#getMoreBooks').removeAttr("disabled");
+                    $('#getMoreBooks').empty();
+                    $('#getMoreBooks').append('载入更多...');
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% set page_title="Search" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <h4>搜索结果</h4>
+        <hr class="featurette-divider">
+        <div class="span12">
+            {% if search_error == '200' %}
+                {% for book in books %}
+                <div class="span12">
+                    <div class="row">
+                        <div class="span4">
+                            <img src="{{ book['images']['small'] }}" />
+                            <a href="/book/{{ book['isbn'] }}"><button class="btn btn-primary">Buy now</button></a>
+                        </div>
+                        <div class="span8">
+                            <table class="table">
+                                <tr>
+                                    <td>书名</td>
+                                    <td>{{ book['title'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>作者</td>
+                                    <td>{{ book['author'][0] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>出版社</td>
+                                    <td>{{ book['publisher'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>摘要</td>
+                                    <td>{{ book['summary']|truncate(length=100,killwords=True,end='... ...') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% elif search_error == '626' %}
+            <div class="span12">
+                <div class="alert">
+                    <strong>Oops! </strong>还没有这本书的卖家!
+                </div>
+            </div>
+            {% else %}
+            <h3>Error {{ search_error }}</h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

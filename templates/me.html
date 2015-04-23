@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% set active_page="me" %}
+{% set page_title="Me" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="span10">
+                <div class="alert alert-info">
+                    <strong>您好! </strong>请及时删除您已经卖出的图书，以免买书的人再找你买这本书！<br>
+                    <strong>提示：</strong>每条卖书信息超过3个月将自动被系统删除！
+                </div>
+            </div>
+        </div>
+        <h4>我的待售书籍</h4>
+        <hr class="featurette-divider">
+        <div class="span12">
+            {% if u_books %}
+            <ul class="thumbnails">
+                {% for u_book in u_books %}
+                <li class="book-display">
+                    <a href="/book/{{ u_book['isbn'] }}">
+                        <div class="thumbnail book-label text-center">
+                            <div class="span12 book-label-body">
+                                <img src="{{ u_book['images']['small'] }}" />
+                            </div>
+                            <div class="span12 book-label-header">
+                                <h5>{{ u_book['title'] }}</h5>
+                            </div>
+                            <p class="book-label-footer">
+                                <a href="/editbook/{{ u_book['isbn'] }}"><button class="btn btn-warning"><i class="icon-edit icon-white"></i>编辑这本书</button></a>
+                                <div class="form-horizontal">
+                                <a href="/delbook/{{ u_book['isbn'] }}" ><button class="btn btn-danger"><i class="icon-trash icon-white"></i>删除这本书</button></a>
+                                </div>
+                            </p>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+                {% if (u_books|length())>=8 %}
+                    <button class="btn btn-large btn-block btn-primary" value="8" id="getMoreBooks" type="button">显示更多...</button>
+                {% endif %}
+            {% else %}
+            <div class="span12">
+                <div class="span10">
+                    <div class="alert">
+                        <strong>Oops! </strong>您还没有卖过书！
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    $('#getMoreBooks').click(function(){
+        $('#getMoreBooks').attr("disabled","disabled");
+        $('#getMoreBooks').empty();
+        $('#getMoreBooks').append('正在载入...');
+        
+        var request = $('#getMoreBooks').val();
+        var theurl = "/ajaxpager/me/"+request;
+        var new_request = parseInt(request);
+        
+        $.ajax({
+            type:"GET",
+            url:theurl,
+            dataType:"json",
+            success:function(u_books) {
+                $.each(u_books, function(i,u_book){
+                    var book_html ='<li class="book-display">\
+                        <a href="/book/'+ u_book['isbn'] +'">\
+                            <div class="thumbnail book-label text-center">\
+                                <div class="span12 book-label-body">\
+                                    <img src="'+ u_book['images']['small'] +'" />\
+                                </div>\
+                                <div class="span12 book-label-header">\
+                                    <h5>'+ u_book['title'] +'</h5>\
+                                </div>\
+                                <p class="book-label-footer">\
+                                    <a href="/editbook/'+ u_book['isbn'] +'"><button class="btn btn-warning"><i class="icon-edit icon-white"></i>编辑这本书</button></a>\
+                                    <div class="form-horizontal">\
+                                    <a href="/delbook/'+ u_book['isbn'] +'"><button class="btn btn-danger"><i class="icon-trash icon-white"></i>删除这本书</button></a>\
+                                    </div>\
+                                </p>\
+                            </div>\
+                        </a>\
+                    </li>';
+                    //alert(i);
+                    new_request=new_request + 1;
+                    $('.thumbnails').append(book_html);
+                });
+                if(parseInt(request)==new_request){
+                    $('#getMoreBooks').remove();
+                }else{
+                    $('#getMoreBooks').attr("value",new_request.toString());
+                    $('#getMoreBooks').removeAttr("disabled");
+                    $('#getMoreBooks').empty();
+                    $('#getMoreBooks').append('载入更多...');
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}

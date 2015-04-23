@@ -1,0 +1,64 @@
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+.navbar .brand {
+    padding:0px 20px 0px;
+}
+/*this is mybox by justin*/
+.mybox {
+    background-color:white;
+    display:block;
+    margin:10px;
+    padding:10px;
+    border-radius: 10px;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    -khtml-border-radius: 10px;
+
+    box-shadow:2px 2px 20px #528B8B;
+    -webkit-box-shadow:2px 2px 20px #528B8B;
+    -moz-box-shadow:2px 2px 20px #528B8B;
+    -khtml-box-shadow:2px 2px 20px #528B8B;
+}
+.book-display{
+    width:149px;
+}
+.book-label {
+    height:270px;
+    overflow:hidden;
+}
+.book-label-header {
+    height:80px;
+    border-bottom:gray solid 1px;
+    margin-bottom:10px;
+}
+.book-label-body {
+}
+.book-label-footer {
+    margin-top:5px;
+}
+/* book review */
+textarea.bookreview {
+    width: 100%;
+    min-height: 300px;
+    padding: 0 0;
+}
+
+.book-review {
+    border-top: solid 1px #eee;
+}
+
+.book-review .user-name, .book-review .updated, .book-review .created {
+    font-size: 1.2rem;
+    color: #777;
+}
+
+.book-review .content {
+    font-size: 1.1rem;
+    color: #555555;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+}

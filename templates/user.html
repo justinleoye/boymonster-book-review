@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% set page_title="User Info" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        {% if search_error == '200' or search_error=='646' %}
+        <div class="span12">
+            <h4>基本信息</h4>
+            <hr class="featurette-divider">
+            <div class="span10"><i class="icon-user"></i><span class="label label-info">卖家:{{ owner.username }}</span></div>
+            <div class="span10"><i class="icon-envelope"></i><span class="label label-info">Email:{{ owner.email }}</span></div>
+            <div class="span10"><i class="icon-globe"></i><span class="label label-info">手机号:{{ owner.tel }}</span></div>
+        </div>
+
+        <div class="span12">
+            <h4>{{ owner.username }}的其他图书</h4>
+            <hr class="featurette-divider">
+            {% if search_error != '646' %}
+            <div class="span10">
+                <ul class="thumbnails">
+                    {% for owner_book in owner_books %}
+                    <li class="span3">
+                        <a href="/book/{{ owner_book['isbn'] }}">
+                        <div class="thumbnail">
+                            <img src="{{ owner_book['images']['small'] }}">
+                            <div class="caption">
+                                <h5>{{ owner_book['title'] }}</h5>
+                            </div>
+                        </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <div class="span10">
+                <div class="alert alert-info">
+                    <strong>Sorry! </strong>TA还没有卖书！
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% elif search_error == '616' %}
+        <div class="span12">
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>没有找到该用户！
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="span12">
+            <div class="span10">
+                <div class="alert">
+                    <strong>Oops! </strong>出错了！
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div><!--container-fluid-->
+{% endblock content %}

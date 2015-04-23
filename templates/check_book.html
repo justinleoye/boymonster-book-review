@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% set active_page="checkbook" %}
+{% set page_title="CheckBook" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h4>添加书评</h4>
+            <hr class="featurette-divider">
+            {% if search_error == '200' %}
+            <span class="label"><strong>1.搜索图书</strong></span>
+            &gt;&gt;
+            <span class="label label-success"><strong>2.确认图书</strong></span>
+            &gt;&gt;
+            <span class="label"><strong>3.完&nbsp;&nbsp;成</strong></span>
+            {% else %}
+            <span class="label label-success"><strong>1.搜索图书</strong></span>
+            &gt;&gt;
+            <span class="label"><strong>2.确认图书</strong></span>
+            &gt;&gt;
+            <span class="label"><strong>3.完&nbsp;&nbsp;成</strong></span>
+            {% endif %}
+            <hr class="featurette-divider">
+            <form class="form-horizontal" method="post">
+                <div class="control-group">
+                    <label class="control-label" for="theisbn"><p class="text-info">书后面可以找到ISBN&gt;&gt;</p></label>
+                    <div class="controls">
+                        <img id="theisbn"src="/static/img/theisbn.jpg">
+                    </div>
+                </div>
+                {% if isbn_error == '' %}
+                <div class="control-group">
+                    <label class="control-label" for="inputIsbn">输入ISBN</label>
+                    <div class="controls">
+                        <input type="text" name="isbn" value="" id="inputIsbn" placeholder="输入图书ISBN查询">
+                        <span class="help-inline">例如：9783161484100</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="control-group error">
+                    <label class="control-label" for="inputIsbn">ISBN</label>
+                    <div class="controls">
+                        <input type="text" name="isbn" value="{{isbn}}" id="inputIsbn" placeholder="ISBN">
+                        <span class="help-inline">{{isbn_error}}</span>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">查询图书</button> 
+                    </div>
+                </div>
+            </form>
+            <div class="span12">
+                <p class="muted credit text-center" >不知道什么是ISBN？不知道如何更方便找书？<a href="/help">获取帮助</a></p>
+            </div>
+        </div>
+
+        <div class="span12">
+            {% if book != {} %}
+            <h3>搜索结果</h3>
+            <hr class="featurette-divider">
+                {% if search_error == '200' %}
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span12"><!--book info-->
+                            <div class="row">
+                                <div class="span4">
+                                    <img src="{{ book['images']['medium'] }}" />
+                                </div>
+                                <div class="span8">
+                                    <table class="table">
+                                        <tr>
+                                            <td>书名</td>
+                                            <td>{{ book['title'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>作者</td>
+                                            <td>{{ book['author'][0] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>价格</td>
+                                            <td>{{ book['price'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>出版社</td>
+                                            <td>{{ book['publisher'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>摘要</td>
+                                            <td>{{ book['summary']|truncate(length=100,killwords=True,end='... ...') }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="span12"><!--finish sell bill link-->
+                                    <a href="/addbookreview/{{ isbn }}"><button class="login-check btn btn-primary">添加书评</button></a>
+                                </div><!--finish sell bill link-->
+                            </div>
+                        </div><!--book info-->
+                        
+                    </div><!--row-fluid-->
+                </div><!--container-fluid-->
+                {% else %}
+                <h2>{{ search_error }}</h2>
+                {% endif %}
+            {% endif %}
+        </div>
+        
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}
+{% block javascript %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.login-check').click(function(){
+            var redirecturl = $(this).parent('a').attr('href');
+            var theurl='/ajaxpager/acount/'+'logincheck';
+            $.ajax({
+                type:"GET",
+                url:theurl,
+                success:function(result) {
+                    if(result=='True'){
+                        location.href=redirecturl;
+                    }else{
+                        alert('你还没有登录，请登录后重试！');
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+{% endblock javascript %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% set page_title="Order" %}
+{% block content %}
+<h4>Your order</h4>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <h4>购买该书</h4>
+        <hr class="featurette-divider">
+        {% if search_error=='200' %}
+        <div class="span10">
+            <div class="alert alert-info">
+                <strong>Welcome! </strong>请尽快向卖家联系购买或索取这本书，以免被其他人捷足先登！
+            </div>
+        </div>
+        <div class="span12">
+            <div class="span3">
+                <form class="form-horizontal" id="userbookForm" method="post">
+                    <input type="hidden" value="{{ userbook['userbookid'] }}" name="userbookid">
+                    {% if userbook['ordered'] == 'True' %}
+                    <button type="submit" id="order-button" value="1" class="btn btn-danger"><i class="icon-trash icon-white"></i>从购物车删除</button>
+                    {% else %}
+                    <button type="submit" id="order-button" value="0" class="btn btn-success"><i class="icon-shopping-cart icon-white"></i>加入到购物车</button>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="span3">
+                <a href="/user/{{ userbook['ownerid'] }}"><button class="btn btn-inverse"><i class="icon-user icon-white"></i>立即联系卖家</button></a>
+            </div>
+        </div>
+        {% elif search_error=='640' %}
+        <div class="span10">
+            <div class="alert">
+                <strong>Error! </strong>错误的卖书信息！
+            </div>
+        </div>
+        {% elif search_error=='642' %}
+        <div class="span10">
+            <div class="alert">
+                <strong>Error! </strong>该条卖书信息不存在！
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div><!--container-fluid-->
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    $('#order-button').click(function(){
+        var theurl = window.location.href;
+        $.ajax({
+            type:"POST",
+            url:theurl,
+            data: $('#userbookForm').serialize(),
+            success:function(result) {
+                if (result=='True'){
+                    if ($('#order-button').val()=="0"){
+                        $('#order-button').attr("value","1");
+                        $('#order-button').attr("class","order-button btn btn-danger");
+                        $('#order-button').empty();
+                        $('#order-button').append('<i class="icon-trash icon-white"></i>从购物车删除');
+                    }else{
+                        $('#order-button').attr("value","0");
+                        $('#order-button').attr("class","order-button btn btn-success");
+                        $('#order-button').empty();
+                        $('#order-button').append('<i class="icon-shopping-cart icon-white"></i>加入到购物车');
+                    }
+                }
+
+                if (result=='NotLogin'){
+                    alert("not login");
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}
+

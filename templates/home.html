@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% set page_title="Home" %}
+{% set active_page="home" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="alert alert-success">
+                我们快毕业了，因为不想自己的书被论斤卖掉，也不想学弟学妹高价再从书店买回，于是花两个星期的时间编写了boyMonster这个校园二手书平台。
+                希望能够给大家买书卖书带来方便。<br>另外，即将毕业，希望有学弟学妹接管boyMonster。<a href="/contact">联系我们</a>
+            </div>
+        </div>
+        <div class="span12">
+            <h4>搜索图书</h4>
+            <hr class="featurette-divider">
+            <form action="/search" class="form-inline text-center" method="post">
+                <div class="input-append">
+                    <input type="text" class="span12" name="keyword" placeholder="输入书名或ISBN搜索">
+                    <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i>&nbsp;Search</button>
+                </div>
+            </form>
+            <div class="span12">
+                <p class="muted credit text-center" >不知道什么是ISBN？不知道如何更方便找书？<a href="/help">获取帮助</a></p>
+            </div>
+        </div>
+        <div class="span12">
+            <div class="row-fluid">
+                <h4>分类查找</h4>
+                <hr class="featurette-divider">
+                <form class="form-inline" action="/classify" method="post">
+                    <label for="selectSchool">学院</label>
+                    <select class="span2" id="selectSchool" name="school">
+                        {% for i in range(const_info['school']|length()) %}
+                            {% if i == 0 %}
+                            <option value="{{ const_info['school'][i][0] }}" selected="selected">{{ const_info['school'][i][1] }}</option>
+                            {% else %}
+                            <option value="{{ const_info['school'][i][0] }}">{{ const_info['school'][i][1] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="selectMajor">专业</label>
+                    <select class="span2" id="selectMajor" name="major">
+                        {% for i in range(const_info['schoolmajor']['0']|length()) %}
+                            {% if i == 0 %}
+                            <option value="{{ const_info['schoolmajor']['0'][i][0] }}" selected="selected">{{ const_info['schoolmajor']['0'][i][1] }}</option>
+                            {% else %}
+                            <option value="{{ const_info['schoolmajor']['0'][i][0] }}">{{ const_info['schoolmajor']['0'][i][1] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="selectGrade">年级</label>
+                    <select class="span2" id="selectGrade" name="grade">
+                        {% for i in range(const_info['grade']|length()) %}
+                            {% if i == 0 %}
+                            <option value="{{ const_info['grade'][i][0] }}" selected="selected">{{ const_info['grade'][i][1] }}</option>
+                            {% else %}
+                            <option value="{{ const_info['grade'][i][0] }}">{{ const_info['grade'][i][1] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i>Search</button> 
+                </form>
+            </div>
+        </div>
+        <div class="span12">
+            <div class="row-fluid">
+                <h4>推荐0元图书</h4>
+                <hr class="featurette-divider">
+                <ul class="thumbnails">
+                    <li class="book-display">
+                        <a href="/about">
+                            <div class="thumbnail book-label text-center">
+                                <div class="span12 book-label-body">
+                                    <img src="/static/img/BoyMonsterweixin2.jpg" />
+                                </div>
+                                <div class="span12 book-label-header">
+                                    <h5>BoyMonster微信公众</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% if free_books %}
+                        {% for free_book in free_books %}
+                        <li class="book-display">
+                            <a href="/book/{{ free_book['isbn'] }}">
+                                <div class="thumbnail book-label text-center">
+                                    <div class="span12 book-label-body">
+                                        <img src="{{ free_book['images']['small'] }}" />
+                                    </div>
+                                    <div class="span12 book-label-header">
+                                        <h5>{{ free_book['title'] }}</h5>
+                                        <p>0.00 元</p>
+                                    </div>
+                                    <p class="book-label-footer">
+                                        <a href="/order/{{ free_book['userbookid'] }}" class="btn btn-primary"><i class="icon-hand-up icon-white"></i>马上获取该书</a>
+                                        <form class="form-horizontal" method="post">
+                                            <input type="hidden" value="{{ free_book['userbookid'] }}" name="userbookid">
+                                            {% if free_book['ordered']=='True' %}
+                                            <button type="submit" value="1" class="order-button btn btn-danger"><i class="icon icon-trash  icon-white"></i>从购物车删除</button>
+                                            {% else %}
+                                            <button type="submit" value="0" class="order-button btn btn-success"><i class="icon-shopping-cart icon-white"></i>加入到购物车</button>
+                                            {% endif %}
+                                        </form>
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                        {% endfor %}
+                        {% if (free_books|length())>=7 %}
+                            <button class="btn btn-large btn-block btn-primary" value="7" id="getMoreBooks" type="button">显示更多...</button>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </div><!--row-fluid-->
+        </div>
+    </div><!--row-fluid-->
+</div><!--container-fluid-->
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+// get more free books by ajax
+$(document).ready(function(){
+    $("#loading").ajaxStart(function(){ $(this).show(); });
+    
+    $('#getMoreBooks').click(function(){
+        $('#getMoreBooks').attr("disabled","disabled");
+        $('#getMoreBooks').empty();
+        $('#getMoreBooks').append('正在载入...');
+        var request = $('#getMoreBooks').val();
+        var theurl = "/ajaxpager/freebook/"+request;
+        var new_request = parseInt(request);
+        
+        
+        $.ajax({
+            type:"GET",
+            url:theurl,
+            dataType:"json",
+            success:function(free_books) {
+                $.each(free_books, function(i,free_book){
+                    var thebutton=''
+                    if(free_book['ordered']=='True'){
+                        thebutton='<button type="submit" value="1" class="order-button btn btn-danger" disabled="disabled"><i class="icon icon-trash  icon-white"></i>从购物车删除</button>';
+                    }else{
+                        thebutton='<button type="submit" value="0" class="order-button btn btn-success" disabled="disabled"><i class="icon-shopping-cart icon-white"></i>加入到购物车</button>';
+                    }
+                    var book_html ='<li class="book-display">\
+                        <a href="/book/'+ free_book['isbn'] +'">\
+                            <div class="thumbnail book-label text-center">\
+                                <div class="span12 book-label-body">\
+                                    <img src="'+ free_book['images']['small'] +'" />\
+                                </div>\
+                                <div class="span12 book-label-header">\
+                                    <h5>'+ free_book['title'] +'</h5>\
+                                    <p>0.00 元</p>\
+                                </div>\
+                                <p class="book-label-footer">\
+                                    <a href="/order/'+ free_book['userbookid'] +'" class="btn btn-primary"><i class="icon-hand-up icon-white"></i>马上获取该书</a>\
+                                    <form class="form-horizontal" method="post">\
+                                        <input type="hidden" value="'+ free_book['userbookid'] +'" name="userbookid">\
+                                        '+ thebutton +'\
+                                    </form>\
+                                </p>\
+                            </div>\
+                        </a>\
+                    </li>';
+                    ////alert(i);
+                    new_request=new_request + 1;
+                    $('#getMoreBooks').before(book_html);
+                });
+                if(parseInt(request)==new_request){
+                    $('#getMoreBooks').remove();
+                }else{
+                    $('#getMoreBooks').attr("value",new_request.toString());
+                    $('#getMoreBooks').removeAttr("disabled");
+                    $('#getMoreBooks').empty();
+                    $('#getMoreBooks').append('载入更多...');
+                }
+            }
+        });
+        return false;
+    });
+//});
+////this is the order ajax code eara
+
+//$(document).ready(function(){
+
+    $('.order-button').click(function(){
+        var userbookid = $(this).siblings('input').val();
+        var button = $(this);
+        var theurl = '/order/'+userbookid;
+        $.ajax({
+            type:"POST",
+            url:theurl,
+            async:false,
+            data: $(this).parents('form').serialize(),
+            success:function(result) {
+                
+                if (result=='True'){
+                    var button_status = button.val();
+                    
+                    if (button_status=="1"){
+                        
+                        button.attr("value","0");
+                        button.attr("class","order-button btn btn-success");
+                        button.empty();
+                        button.append('<i class="icon-shopping-cart icon-white"></i>加入到购物车');
+                    }else{
+                        button.attr("value","1");
+                        button.attr("class","order-button btn btn-danger");
+                        button.empty();
+                        button.append('<i class="icon icon-trash  icon-white"></i>从购物车删除');
+                    }
+                }
+
+                if (result=='NotLogin'){
+                    alert("not login");
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}
