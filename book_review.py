@@ -50,7 +50,9 @@ def get_book_reviews(request):
     if book_reviews:
         for book_review in book_reviews:
             writer = get_user(book_review.userid)
+            book = isbn_search(book_review.isbn)
             book_review.writer = writer
+            book_review.book = book
         return book_reviews
     else:
         return None

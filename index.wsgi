@@ -14,7 +14,7 @@ from acount import get_user
 from models import User, SchoolMajor, Book, UserBook
 from acount import AcountHandler,SignupHandler,LoginHandler,LogoutHandler,WelcomeHandler,ProfileHandler,EditProfileHandler,DelAcountHandler
 from book import BookHandler,BuyHandler,SellHandler,FinishSellHandler,DelHandler,EditHandler,MeHandler,OrderListHandler,OrderHandler,SearchHandler,ClassifyHandler,AjaxPager,InfoMajorHandler,CONST_INFO,get_free_books_login,get_free_books,get_user_other_user_books,isbn_search
-from book_review import BookReviewHandler, BookReviewsHandler, CheckBookHandler, AddBookReviewHandler, EditBookReviewHandler
+from book_review import BookReviewHandler, BookReviewsHandler, CheckBookHandler, AddBookReviewHandler, EditBookReviewHandler, get_book_reviews
 # the urls of the web system
 urls = (
     '/(.*)/', 'RedirectHandler',
@@ -67,18 +67,19 @@ class RedirectHandler(Handler):
         self.redirect('/' + path)
 
 class HomeHandler(AcountHandler):
-    def write_html(self, user=None, const_info={}, free_books=None):
-        return render.home(user=user, const_info=const_info, free_books=free_books)
+    def write_html(self, user=None, const_info={}, free_books=None, book_reviews=[]):
+        return render.home(user=user, const_info=const_info, free_books=free_books, book_reviews=book_reviews)
 
     def GET(self):
         user=self.valid()
         const_info = copy.deepcopy(CONST_INFO)
 
+        book_reviews = get_book_reviews(0)
         if user:
             free_books = get_free_books_login(user.userid,0)
         else:
             free_books = get_free_books(0)
-        return self.write_html(user, const_info, free_books)
+        return self.write_html(user, const_info, free_books, book_reviews)
 
     def POST(self):
         user = self.valid()

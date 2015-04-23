@@ -62,6 +62,53 @@
                 </form>
             </div>
         </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <h4>最新书评</h4>
+                <hr class="featurette-divider">
+                {% for review in  book_reviews %}
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="book-review">
+                            <div class="row-fluid">
+                                <div class="span4">
+                                    <div class="book-cover">
+                                        <img src="{{ review.book['images']['medium'] }}" />
+                                        <div class="book-title">
+                                            <a href="/book/{{ review.book['isbn'] }}/reviews">
+                                                <span>{{ review.book['title'] }}</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="span8">
+                                    <div class="row-fluid">
+                                        <div class="span6">
+                                            <div class="user-name">
+                                                <span>{{ review.writer.username }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="span6">
+                                            <div class="updated pull-right">
+                                                <span>{{ review.updated }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row-fluid">
+                                        <div class="span12">
+                                            <div class="content">
+                                                <p>{{ review.content |truncate(100) }} <a href="/book/{{ review.book['isbn'] }}/reviews/{{ review.id }}">查看全文</a></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
         <div class="span12">
             <div class="row-fluid">
                 <h4>推荐0元图书</h4>

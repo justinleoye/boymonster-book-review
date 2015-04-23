@@ -45,7 +45,15 @@ textarea.bookreview {
 }
 
 .book-review {
-    border-top: solid 1px #eee;
+    border-bottom: solid 1px #eee;
+}
+
+.book-review .book-cover{
+    text-align: center;
+}
+
+.book-review .book-title {
+    font-weight: bold;
 }
 
 .book-review .user-name, .book-review .updated, .book-review .created {
