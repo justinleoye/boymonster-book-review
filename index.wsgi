@@ -76,6 +76,8 @@ class HomeHandler(AcountHandler):
         const_info = copy.deepcopy(CONST_INFO)
 
         book_reviews = get_book_reviews(0)
+        if not book_reviews:
+            book_reviews = []
         if user:
             free_books = get_free_books_login(user.userid,0)
         else:

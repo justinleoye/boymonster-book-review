@@ -83,6 +83,8 @@ class ReviewsHandler(AcountHandler):
             return self.redirect('/login')
         # should check if the url_param 'is_mine' is True
         book_reviews = get_my_book_reviews(user.userid, 0)
+        if not book_reviews:
+            book_reviews = []
         return self.write_html(user,book_reviews)
 
 class BookReviewsHandler(AcountHandler):

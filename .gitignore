@@ -4,6 +4,7 @@ build
 
 *.pyc
 *.pyo
+*.wsgic
 *.egg
 *.egg-info
 
