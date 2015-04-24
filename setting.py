@@ -41,7 +41,7 @@ MYSQL_PORT = int(sae.const.MYSQL_PORT)
 #MYSQL_PORT = 3306
 
 mysql_engine = create_engine(
-    'mysql://%s:%s@%s:%s/app_tinygo?charset=utf8' %
+    'mysql://%s:%s@%s:%s/app_worm?charset=utf8' %
     (MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT),
     encoding='utf8',
     echo=True,
