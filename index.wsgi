@@ -14,7 +14,7 @@ from acount import get_user
 from models import User, SchoolMajor, Book, UserBook
 from acount import AcountHandler,SignupHandler,LoginHandler,LogoutHandler,WelcomeHandler,ProfileHandler,EditProfileHandler,DelAcountHandler
 from book import BookHandler,BuyHandler,SellHandler,FinishSellHandler,DelHandler,EditHandler,MeHandler,OrderListHandler,OrderHandler,SearchHandler,ClassifyHandler,AjaxPager,InfoMajorHandler,CONST_INFO,get_free_books_login,get_free_books,get_user_other_user_books,isbn_search
-from book_review import BookReviewHandler, BookReviewsHandler, CheckBookHandler, AddBookReviewHandler, EditBookReviewHandler, get_book_reviews
+from book_review import ReviewsHandler, BookReviewHandler, BookReviewsHandler, CheckBookHandler, AddBookReviewHandler, EditBookReviewHandler, get_book_reviews
 # the urls of the web system
 urls = (
     '/(.*)/', 'RedirectHandler',
@@ -46,6 +46,7 @@ urls = (
     '/editbook/([0-9]*)','EditHandler',
     '/info/getmajor/([0-9]{1,2})','InfoMajorHandler',
     '/ajaxpager/(.*)/([0-9]{1,2}|[0-9]{1,2}[&][0-9]{6}[&][0-9]|[0-9]{1,2}[&][0-9]{10}|[0-9]{1,2}[&][0-9]{13}|logincheck)','AjaxPager',
+    '/reviews','ReviewsHandler',
     '/checkbook','CheckBookHandler',
     '/addbookreview/([0-9]*)', 'AddBookReviewHandler',
     '/book/([0-9]*)/reviews', 'BookReviewsHandler',

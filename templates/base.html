@@ -38,7 +38,9 @@
         {% block header %}
         <div class="navbar navbar-inverse navbar-fixed-top">
             {% set navigation=[
-                ('/home','home','买书'),
+                ('/home','home','主页'),
+                ('/checkbook','addbookreview','写书评'),
+                ('/reviews?is_mine=1','mybookreviews','我的书评'),
                 ('/sellbook','sellbook','卖书'),
                 ('/me','me','待售'),
                 ('/orderlist','orderlist','购物车')] -%}

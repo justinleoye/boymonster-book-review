@@ -43,23 +43,47 @@ class Handler:
     def redirect(self,path):
         web.seeother(path)
 
+def add_book_into_reviews(book_reviews):
+    for book_review in book_reviews:
+        writer = get_user(book_review.userid)
+        book = isbn_search(book_review.isbn)
+        book_review.writer = writer
+        book_review.book = book
+    return book_reviews
+
 def get_book_reviews(request):
     req0=request
     req1=req0+8
     book_reviews = web.ctx.orm.query(BookReview).order_by(desc(BookReview.updated))[req0:req1]
     if book_reviews:
-        for book_review in book_reviews:
-            writer = get_user(book_review.userid)
-            book = isbn_search(book_review.isbn)
-            book_review.writer = writer
-            book_review.book = book
-        return book_reviews
+        return add_book_into_reviews(book_reviews)
+    else:
+        return None
+
+def get_my_book_reviews(userid, request):
+    req0=request
+    req1=req0+8
+    book_reviews = web.ctx.orm.query(BookReview).filter(BookReview.userid==userid).order_by(desc(BookReview.updated))[req0:req1]
+    if book_reviews:
+        return add_book_into_reviews(book_reviews)
     else:
         return None
 
 def get_book_review(review_id):
     book_review = web.ctx.orm.query(BookReview).filter(BookReview.id==review_id).first()
     return book_review
+
+class ReviewsHandler(AcountHandler):
+    def write_html(self, user=None, book_reviews=[]):
+        return render.reviews(user=user, book_reviews=book_reviews)
+
+    def GET(self):
+        user=self.valid()
+        if not user:
+            return self.redirect('/login')
+        # should check if the url_param 'is_mine' is True
+        book_reviews = get_my_book_reviews(user.userid, 0)
+        return self.write_html(user,book_reviews)
 
 class BookReviewsHandler(AcountHandler):
     def write_html(self, user=None, book={}, book_reviews=[], isbn_error='', search_error=''):
