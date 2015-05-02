@@ -860,7 +860,6 @@ class SearchHandler(AcountHandler):
                 d_books = name_search(p)
                 if not d_books.has_key('search-error'):
                     result = match_search(d_books)
-                    print 'result:',result
                     if len(result['books_on_sale'])==0 and len(result['books_with_review'])==0:
                         search_error = '626' #book not exist in our inner db
                 else:
@@ -870,7 +869,6 @@ class SearchHandler(AcountHandler):
         else:
             search_error = '624' #not a valided title for search
 
-        print 'result:',result
         return self.write_html(user, result, search_error)
 
     def POST(self):
