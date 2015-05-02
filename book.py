@@ -158,7 +158,6 @@ def match_search(books):
     books_with_review = []
     if books.has_key('books'):
         for book in books['books']:
-            print 'book:',repr(book)
             in_book = web.ctx.orm.query(Book).filter(Book.doubanid==book['id']).first()
             if in_book:
                 book['isbn']=in_book.isbn
