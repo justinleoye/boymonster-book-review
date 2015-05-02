@@ -7,40 +7,68 @@
         <hr class="featurette-divider">
         <div class="span12">
             {% if search_error == '200' %}
-                {% for book in books %}
-                <div class="span12">
-                    <div class="row">
-                        <div class="span4">
-                            <img src="{{ book['images']['small'] }}" />
-                            <a href="/book/{{ book['isbn'] }}"><button class="btn btn-primary">Buy now</button></a>
-                        </div>
-                        <div class="span8">
-                            <table class="table">
-                                <tr>
-                                    <td>书名</td>
-                                    <td>{{ book['title'] }}</td>
-                                </tr>
-                                <tr>
-                                    <td>作者</td>
-                                    <td>{{ book['author'][0] }}</td>
-                                </tr>
-                                <tr>
-                                    <td>出版社</td>
-                                    <td>{{ book['publisher'] }}</td>
-                                </tr>
-                                <tr>
-                                    <td>摘要</td>
-                                    <td>{{ book['summary']|truncate(length=100,killwords=True,end='... ...') }}</td>
-                                </tr>
-                            </table>
-                        </div>
+                {% for book in result.books_on_sale %}
+                <div class="row">
+                    <div class="span4">
+                        <img src="{{ book['images']['small'] }}" />
+                        <a href="/book/{{ book['isbn'] }}"><button class="btn btn-primary">Buy now</button></a>
+                    </div>
+                    <div class="span8">
+                        <table class="table">
+                            <tr>
+                                <td>书名</td>
+                                <td>{{ book['title'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>作者</td>
+                                <td>{{ book['author'][0] }}</td>
+                            </tr>
+                            <tr>
+                                <td>出版社</td>
+                                <td>{{ book['publisher'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>摘要</td>
+                                <td>{{ book['summary']|truncate(length=100,killwords=True,end='... ...') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+                {% for book in result.books_with_review %}
+                <div class="row">
+                    <div class="span4">
+                        <img src="{{ book['images']['small'] }}" />
+                        <a href="/book/{{ book['isbn'] }}/reviews">
+                            <button class="btn btn-primary">查看书评</button>
+                        </a>
+                    </div>
+                    <div class="span8">
+                        <table class="table">
+                            <tr>
+                                <td>书名</td>
+                                <td>{{ book['title'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>作者</td>
+                                <td>{{ book['author'][0] }}</td>
+                            </tr>
+                            <tr>
+                                <td>出版社</td>
+                                <td>{{ book['publisher'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>摘要</td>
+                                <td>{{ book['summary']|truncate(length=100,killwords=True,end='... ...') }}</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
                 {% endfor %}
             {% elif search_error == '626' %}
             <div class="span12">
                 <div class="alert">
-                    <strong>Oops! </strong>还没有这本书的卖家!
+                    <strong>Oops! </strong>还没有这本书的相关信息!
                 </div>
             </div>
             {% else %}

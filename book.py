@@ -7,12 +7,12 @@ import urllib2
 import json
 import datetime
 
-from sqlalchemy import desc,distinct
+from sqlalchemy import desc,distinct,or_
 
 from acount import AcountHandler
 from setting import render
 from setting import load_sqla
-from models import User, SchoolMajor, Book, UserBook, OrderList
+from models import User, SchoolMajor, Book, UserBook, OrderList, BookReview
 
 import re
 import cgi
@@ -155,6 +155,7 @@ def name_search(book_title):
 
 def match_search(books):
     in_books = []
+    books_with_review = []
     if books.has_key('books'):
         for book in books['books']:
             in_book = web.ctx.orm.query(Book).filter(Book.doubanid==book['id']).first()
@@ -162,7 +163,12 @@ def match_search(books):
                 book['isbn']=in_book.isbn
                 in_books.append(book)
 
-    return in_books
+            book_with_review = web.ctx.orm.query(BookReview).filter(or_(BookReview.isbn==book['isbn10'], BookReview.isbn==book['isbn13'])).first()
+            if book_with_review:
+                book['isbn'] = book_with_review.isbn
+                books_with_review.append(book)
+
+    return {'books_on_sale': in_books, 'books_with_review': books_with_review}
 
 
 #def search(book_title):
@@ -839,22 +845,23 @@ class OrderHandler(AcountHandler):
 
 
 class SearchHandler(AcountHandler):
-    def write_html(self, user=None, books=[], search_error=''):
-        return render.search(user=user, books=books, search_error=search_error)
+    def write_html(self, user=None, result={}, search_error=''):
+        return render.search(user=user, result=result, search_error=search_error)
 
     def GET(self,p):
         user = self.valid()
         
         search_error = '200'
-        books =[]
+        result ={}
         if p:
             p=p.encode('UTF-8')#this is a brilliant time for my coding
     
             if valid_title(p):
                 d_books = name_search(p)
                 if not d_books.has_key('search-error'):
-                    books = match_search(d_books)
-                    if books==[]:
+                    result = match_search(d_books)
+                    print 'result:',result
+                    if len(result['books_on_sale'])==0 and len(result['books_with_review'])==0:
                         search_error = '626' #book not exist in our inner db
                 else:
                     search_error = d_books['search-error']
@@ -863,7 +870,8 @@ class SearchHandler(AcountHandler):
         else:
             search_error = '624' #not a valided title for search
 
-        return self.write_html(user, books, search_error)
+        print 'result:',result
+        return self.write_html(user, result, search_error)
 
     def POST(self):
         user =self.valid

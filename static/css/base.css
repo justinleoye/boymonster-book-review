@@ -3,7 +3,13 @@ body {
 }
 .navbar .brand {
     padding:0px 20px 0px;
+    margin-top: 3px;
 }
+
+.navbar .brand img {
+    margin-right: 5px;
+}
+
 /*this is mybox by justin*/
 .mybox {
     background-color:white;
