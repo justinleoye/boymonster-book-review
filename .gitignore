@@ -30,3 +30,5 @@ log/
 env/*.local.sh
 
 nohup.*
+
+1.tar.gz

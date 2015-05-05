@@ -179,7 +179,7 @@ class BookReviewHandler(AcountHandler):
                 review.writer = writer
                 review.isOwned = False
                 try:
-                    if user['userid ']== review.userid:
+                    if user['userid'] == review.userid:
                         review.isOwned = True
                 except (KeyError,TypeError), e:
                     print e
