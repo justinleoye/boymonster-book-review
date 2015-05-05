@@ -177,12 +177,11 @@ class BookReviewHandler(AcountHandler):
                 review = get_book_review(review_id)
                 writer = get_user(review.userid)
                 review.writer = writer
+                review.isOwned = False
                 try:
-                    if user.userid == review.userid:
+                    if user['userid ']== review.userid:
                         review.isOwned = True
-                    else:
-                        review.isOwned = False
-                except (KeyError), e:
+                except (KeyError,TypeError), e:
                     print e
             else:
                 search_error=book['search-error']
