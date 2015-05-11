@@ -1,13 +1,16 @@
 {% extends "base.html" %}
-{% set page_title="mybookreviews" %}
-{% set active_page="home" %}
+{% set page_title="bookreviews" %}
 {% block content %}
 <div class="container-fluid">
     <div class="row-fluid">
         
         <div class="row-fluid">
             <div class="span12">
+                {% if is_mine %}
                 <h4>我的书评</h4>
+                {% else %}
+                <h4>全部书评</h4>
+                {% endif %}
                 <hr class="featurette-divider">
                 {% for review in  book_reviews %}
                 <div class="row-fluid">

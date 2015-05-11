@@ -60,6 +60,13 @@ def get_book_reviews(request):
     else:
         return None
 
+def get_all_book_reviews():
+    book_reviews = web.ctx.orm.query(BookReview).order_by(desc(BookReview.updated)).all()
+    if book_reviews:
+        return add_book_into_reviews(book_reviews)
+    else:
+        return None
+
 def get_my_book_reviews(userid, request):
     req0=request
     req1=req0+8
@@ -74,18 +81,24 @@ def get_book_review(review_id):
     return book_review
 
 class ReviewsHandler(AcountHandler):
-    def write_html(self, user=None, book_reviews=[]):
-        return render.reviews(user=user, book_reviews=book_reviews)
+    def write_html(self, user=None, is_mine=False, book_reviews=[]):
+        return render.reviews(user=user, is_mine=is_mine, book_reviews=book_reviews)
 
     def GET(self):
+        is_mine = True if web.ctx.query == '?is_mine=1' else False
+        print 'is_mine:',repr(is_mine)
         user=self.valid()
-        if not user:
-            return self.redirect('/login')
-        # should check if the url_param 'is_mine' is True
-        book_reviews = get_my_book_reviews(user.userid, 0)
+        if is_mine:
+            if not user:
+                return self.redirect('/login')
+            # should check if the url_param 'is_mine' is True
+            book_reviews = get_my_book_reviews(user.userid, 0)
+        else:
+            book_reviews = get_all_book_reviews()
+
         if not book_reviews:
             book_reviews = []
-        return self.write_html(user,book_reviews)
+        return self.write_html(user, is_mine, book_reviews)
 
 class BookReviewsHandler(AcountHandler):
     def write_html(self, user=None, book={}, book_reviews=[], isbn_error='', search_error=''):
