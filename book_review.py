@@ -86,7 +86,6 @@ class ReviewsHandler(AcountHandler):
 
     def GET(self):
         is_mine = True if web.ctx.query == '?is_mine=1' else False
-        print 'is_mine:',repr(is_mine)
         user=self.valid()
         if is_mine:
             if not user:
@@ -333,3 +332,18 @@ class EditBookReviewHandler(AcountHandler):
             else:
                 search_error=book['search-error']
         return self.write_html(user, book, review, isbn_error, search_error, content_error)
+
+class DelBookReviewHandler(AcountHandler):
+    def GET(self,isbn,review_id):
+        #valid the current user's validation
+        user = self.valid()
+        if not user:
+            return self.redirect('/login')
+
+        valided_isbn = valid_isbn(isbn)
+        valided_review_id = valid_review_id(review_id)
+
+        #check the user's authority
+        if valided_isbn and valided_review_id:
+            web.ctx.orm.query(BookReview).filter(BookReview.userid==user.userid, BookReview.id==review_id).delete()
+        self.redirect('/book/%s/reviews' % (isbn))
